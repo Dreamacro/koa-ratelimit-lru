@@ -1,0 +1,38 @@
+{
+  "name": "koa-ratelimit-lru",
+  "version": "1.0.0",
+  "description": "Rate limiter middleware backed by lru-cache",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha --harmony --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dreamacro/koa-ratelimit-lru.git"
+  },
+  "keywords": [
+    "koa",
+    "middleware",
+    "ratelimiter",
+    "ratelimit",
+    "rate"
+  ],
+  "author": "Dreamacro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Dreamacro/koa-ratelimit-lru/issues"
+  },
+  "homepage": "https://github.com/Dreamacro/koa-ratelimit-lru#readme",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "lru-cache": "^4.0.1",
+    "ms": "^0.7.2"
+  },
+  "devDependencies": {
+    "koa": "^2.0.0",
+    "mocha": "^3.1.2",
+    "should": "^11.1.1",
+    "supertest": "^2.0.1"
+  },
+  "node": ">= 7.0.0"
+}
