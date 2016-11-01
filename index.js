@@ -22,14 +22,16 @@ module.exports = ratelimit
  * @api public
  */
 
-function ratelimit(opts = {}) {
-    opts.headers = opts.headers || {}
-    opts.headers.remaining = opts.headers.remaining || 'X-RateLimit-Remaining'
-    opts.headers.reset = opts.headers.reset || 'X-RateLimit-Reset'
-    opts.headers.total = opts.headers.total || 'X-RateLimit-Limit'
-    opts.max = opts.max || Infinity
-    opts.duration = opts.duration || 1000 * 60
-    opts.rate = opts.rate || 1000
+function ratelimit({
+        headers: {
+            remaining: 'X-RateLimit-Remaining',
+            reset: 'X-RateLimit-Reset',
+            total: 'X-RateLimit-Limit'
+        },
+        max: Infinity,
+        duration: 1000 * 60,
+        rate: 1000
+    } = {}) {
 
     let cache = LRU({
         max: opts.max,
