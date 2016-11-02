@@ -37,18 +37,25 @@ function ratelimit(opts = {}) {
     })
 
     const getByID = id => {
-        const count = id + ':count'
-        const reset = id + ':reset'
+        // get with suffix
+        const count = cache.get(id + ':count')
+        let reset = cache.get(id + ':reset')
+
         const total = opts.rate
-        const duration = (Date.now() + opts.duration) / 1000 | 0
-        const ret = cache.get(count)
-        const remaining = ret === undefined
-                                        ? (cache.set(reset, duration), total)
-                                        : ret > 0 ? ret - 1 : 0
-        cache.set(count, remaining)
+
+        let remaining
+        if (count === undefined || reset === undefined) {
+            const duration = (Date.now() + opts.duration) / 1000 | 0
+            reset = duration
+            cache.set(id + ':reset', duration)
+            remaining = total
+        } else {
+            remaining = count > 0 ? count - 1 : 0
+        }
+        cache.set(id + ':count', remaining)
         return {
             remaining,
-            reset: cache.get(reset),
+            reset,
             total
         }
     }
@@ -67,7 +74,7 @@ function ratelimit(opts = {}) {
         const count = remaining > 0 ? remaining - 1 : 0
 
         // header fields
-        var headers = {}
+        let headers = {}
         headers[opts.headers.remaining] = count
         headers[opts.headers.reset] = reset
         headers[opts.headers.total] = total
