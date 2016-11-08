@@ -9,6 +9,8 @@ module.exports = ratelimit
  *
  * - `duration` limit duration in milliseconds [1 minute]
  * - `max` max length of cache [Infinity]
+ * - `store` custom lru-cache [new cache]
+ * - `prefix` custom prefix in lru-cache [ratelimit:]
  * - `rate` max requests per `id` [1000]
  * - `id` id to compare requests [ip]
  * - `body` custom throw body [json]
@@ -30,16 +32,16 @@ function ratelimit(opts = {}) {
     opts.max = opts.max || Infinity
     opts.duration = opts.duration || 1000 * 60
     opts.rate = opts.rate || 1000
-
-    let cache = LRU({
-        max: opts.max,
-        maxAge: opts.duration
-    })
+    opts.prefix = opts.prefix || 'ratelimit:'
+    const cache = opts.store || LRU({ max: opts.max, maxAge: opts.duration })
 
     const getByID = id => {
-        // get with suffix
-        const count = cache.get(id + ':count')
-        let reset = cache.get(id + ':reset')
+        // set suffix
+        const countKey = opts.prefix + id + ':count'
+        const resetKey = opts.prefix + id + ':reset'
+
+        const count = cache.get(countKey)
+        let reset = cache.get(resetKey)
 
         const total = opts.rate
 
@@ -47,12 +49,12 @@ function ratelimit(opts = {}) {
         if (count === undefined || reset === undefined) {
             const duration = (Date.now() + opts.duration) / 1000 | 0
             reset = duration
-            cache.set(id + ':reset', duration)
+            cache.set(resetKey, duration)
             remaining = total
         } else {
             remaining = count > 0 ? count - 1 : 0
         }
-        cache.set(id + ':count', remaining)
+        cache.set(countKey, remaining)
         return {
             remaining,
             reset,

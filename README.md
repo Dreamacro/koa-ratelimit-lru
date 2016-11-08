@@ -45,10 +45,50 @@ app.use(ctx => {
 app.listen(3000, _ => console.log('listening on port 3000'))
 ```
 
+Using one `lru-cache` to store keys
+
+```javascript
+const ratelimit = require('koa-ratelimit-lru')
+const Koa = require('koa')
+const router = require('koa-router')()
+const app = new Koa()
+const store = require('lru-cache')()
+
+// Note: When you using custom store, duration and max would lose efficacy
+
+router.get(
+    '/foo',
+    ratelimit({
+        store,
+        rate: 5,
+        prefix: 'foo:'
+    }),
+    ctx => ctx.body = 'foo'
+)
+
+router.get(
+    '/bar',
+    ratelimit({
+        store,
+        rate: 10,
+        prefix: 'bar:'
+    }),
+    ctx => ctx.body = 'bar'
+)
+
+// response middleware
+
+app.use(router.routes())
+
+app.listen(3000, _ => console.log('listening on port 3000'))
+```
+
 ## Options
 
 * `duration` limit duration in milliseconds [1 minute]
 * `max` max length of cache [Infinity]
+* `store` custom lru-cache [new cache]
+* `prefix` custom prefix in lru-cache [ratelimit:]
 * `rate` max requests per `id` [1000]
 * `id` id to compare requests [ip]
 * `body` custom throw body [json]
