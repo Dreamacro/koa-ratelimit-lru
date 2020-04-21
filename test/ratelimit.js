@@ -234,7 +234,7 @@ describe('ratelimit-lru middleware', _ => {
     describe('custom store', _ => {
         it('should store keys in lru-cache', done => {
             const app = new Koa()
-            const store = LRU()
+            const store = new LRU()
 
             app.use(ratelimit({
                 store,
@@ -257,7 +257,7 @@ describe('ratelimit-lru middleware', _ => {
     describe('custom prefix', _ => {
         it('should have right prefix in lru-cache', done => {
             const app = new Koa()
-            const store = LRU()
+            const store = new LRU()
 
             app.use(ratelimit({
                 store,

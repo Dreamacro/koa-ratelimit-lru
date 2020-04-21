@@ -33,7 +33,7 @@ function ratelimit(opts = {}) {
     opts.duration = opts.duration || 1000 * 60
     opts.rate = opts.rate || 1000
     opts.prefix = opts.prefix || 'ratelimit:'
-    const cache = opts.store || LRU({ max: opts.max, maxAge: opts.duration })
+    const cache = opts.store || new LRU({ max: opts.max, maxAge: opts.duration })
 
     const getByID = id => {
         // set suffix
